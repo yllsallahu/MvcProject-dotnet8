@@ -1,27 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MvcProject.Models
+namespace MyMVCProject.Models
 {
     public class Product
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Product Name is required")]
-        public string Name { get; set; } = string.Empty;
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; } = default!;
+
+        [StringLength(500)]
+        public string? Description { get; set; }
 
         [Required]
         public decimal Price { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = true; 
 
-        // Foreign Key
-        [Display(Name = "Category")]
-        public int CategoryId { get; set; }
+       
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
 
-        [ForeignKey("CategoryId")]
-
-        // User who created the product
+        
         public string? CreatedByUserId { get; set; }
     }
 }

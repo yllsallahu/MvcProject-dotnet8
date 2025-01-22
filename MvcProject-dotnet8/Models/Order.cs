@@ -11,8 +11,6 @@ namespace MvcProject.Models
 
         public bool IsActive { get; set; } = true;
 
-        // Shembull: Order i përket një përdoruesi
         public string? UserId { get; set; }
-        // Opsionale: public ApplicationUser? User { get; set; }
     }
 }

@@ -18,41 +18,34 @@ namespace MvcProject_dotnet8.Controllers
 
 		public async Task<IActionResult> Index(string searchName, string sortOrder, int page = 1)
 		{
-			int pageSize = 5; // Madhësia e çdo faqe
+			int pageSize = 5;
 
-			// Marrja e produkteve nga databaza
 			var products = from p in _context.Products
 						   select p;
 
-			// Filtrim (nëse shfaqet nga query)
 			if (!string.IsNullOrEmpty(searchName))
 			{
 				products = products.Where(p => p.Name.Contains(searchName));
 			}
 
-			// Renditje
 			products = (sortOrder == "name_desc")
 				? products.OrderByDescending(p => p.Name)
 				: products.OrderBy(p => p.Name);
 
-			// Pagination
 			int totalItems = await products.CountAsync();
 			var items = await products
 				.Skip((page - 1) * pageSize)
 				.Take(pageSize)
 				.ToListAsync();
 
-			// Kalo variabla ndihmëse te ViewBag
 			ViewBag.CurrentPage = page;
 			ViewBag.TotalPages = (int)System.Math.Ceiling(totalItems / (double)pageSize);
 			ViewBag.SearchName = searchName;
 			ViewBag.SortOrder = sortOrder;
 
-			// Kthe pamjen me listën e produkteve
 			return View(items);
 		}
 
-		// GET: Product/Details/5
 		public async Task<IActionResult> Details(int? id)
 		{
 			if (id == null)
@@ -67,13 +60,11 @@ namespace MvcProject_dotnet8.Controllers
 			return View(product);
 		}
 
-		// GET: Product/Create
 		public IActionResult Create()
 		{
 			return View();
 		}
 
-		// POST: Product/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([Bind("Id,Name,Price")] Product product)
@@ -87,7 +78,6 @@ namespace MvcProject_dotnet8.Controllers
 			return View(product);
 		}
 
-		// GET: Product/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
 			if (id == null)
@@ -101,7 +91,6 @@ namespace MvcProject_dotnet8.Controllers
 			return View(product);
 		}
 
-		// POST: Product/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price")] Product product)
@@ -128,7 +117,6 @@ namespace MvcProject_dotnet8.Controllers
 			return View(product);
 		}
 
-		// GET: Product/Delete/5
 		public async Task<IActionResult> Delete(int? id)
 		{
 			if (id == null)
@@ -143,7 +131,6 @@ namespace MvcProject_dotnet8.Controllers
 			return View(product);
 		}
 
-		// POST: Product/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)

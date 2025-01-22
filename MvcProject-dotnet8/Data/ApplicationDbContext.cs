@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MvcProject.Models;
 
-namespace MvcProject.Data
+namespace MvcProject_dotnet8.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
@@ -10,9 +9,5 @@ namespace MvcProject.Data
             : base(options)
         {
         }
-
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Order> Orders { get; set; }
     }
 }

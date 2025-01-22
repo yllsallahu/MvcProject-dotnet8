@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MvcProject.Data;
 using MvcProject_dotnet8.Data;
 
 var builder = WebApplication.CreateBuilder(args);

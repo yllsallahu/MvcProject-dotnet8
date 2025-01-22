@@ -20,7 +20,6 @@ namespace MvcProject.Models
         public int CategoryId { get; set; }
 
         [ForeignKey("CategoryId")]
-        public Category? Category { get; set; }
 
         // User who created the product
         public string? CreatedByUserId { get; set; }

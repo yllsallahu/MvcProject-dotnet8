@@ -1,23 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyMVCProject.Data;
-using MyMVCProject.Models;
+using MvcProject_dotnet8.Data;
+using MvcProject.Models;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace MyMVCProject.Controllers
+namespace MvcProject_dotnet8.Controllers
 {
 	public class ProductController : Controller
 	{
 		private readonly ApplicationDbContext _context;
 
-		// Konstruktor
 		public ProductController(ApplicationDbContext context)
 		{
 			_context = context;
 		}
 
-		// GET: Product
 		public async Task<IActionResult> Index(string searchName, string sortOrder, int page = 1)
 		{
 			int pageSize = 5; // Madhësia e çdo faqe

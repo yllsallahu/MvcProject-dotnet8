@@ -60,7 +60,9 @@ namespace MvcProject_dotnet8.Controllers
 			return View(product);
 		}
 
-		public IActionResult Create()
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
+
 		{
 			return View();
 		}

@@ -4,6 +4,7 @@ using MvcProject_dotnet8.Data;
 using MvcProject.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MvcProject_dotnet8.Controllers
 {

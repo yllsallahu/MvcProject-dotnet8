@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyMVCProject.Data;
-using MyMVCProject.Models;
+using MvcProject_dotnet8.Data;
+using MvcProject.Models;
 using System.Linq;
 using System.Threading.Tasks;
 

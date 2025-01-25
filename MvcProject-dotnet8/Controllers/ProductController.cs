@@ -168,15 +168,54 @@ namespace MvcProject_dotnet8.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                .Include(p => p.Permissions)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product != null)
+            if (product == null)
             {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
-            return RedirectToAction(nameof(Index));
+            var currentUserId = _userManager.GetUserId(User);
+            if (product.CreatedByUserId != currentUserId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
+
+            try
+            {
+                // First remove any permissions
+                if (product.Permissions != null && product.Permissions.Any())
+                {
+                    _context.ProductPermissions.RemoveRange(product.Permissions);
+                }
+
+                // Then remove the product
+                _context.Products.Remove(product);
+                
+                // Log the deletion
+                var auditLog = new AuditLog
+                {
+                    UserId = currentUserId,
+                    Action = "Delete",
+                    EntityName = "Product",
+                    EntityId = product.Id,
+                    Timestamp = DateTime.UtcNow
+                };
+                _context.AuditLogs.Add(auditLog);
+
+                await _context.SaveChangesAsync();
+                
+                TempData["Message"] = "Product deleted successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log the error if you have logging configured
+                ModelState.AddModelError("", "Unable to delete product. Try again, and if the problem persists, contact your system administrator.");
+                return View("Delete", product);
+            }
         }
 
         private bool ProductExists(int id)

@@ -15,10 +15,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()  // Add this line to register role services
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddSession(); // Add session services
 
 var app = builder.Build();
 
+app.UseSession(); // Enable session middleware
 
 using (var scope = app.Services.CreateScope())
 {

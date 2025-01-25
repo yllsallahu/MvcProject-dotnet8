@@ -15,5 +15,16 @@ namespace MvcProject_dotnet8.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<ProductPermission> ProductPermissions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ProductPermission>()
+                .HasOne(pp => pp.Product)
+                .WithMany(p => p.Permissions)
+                .HasForeignKey(pp => pp.ProductId);
+        }
     }
 }

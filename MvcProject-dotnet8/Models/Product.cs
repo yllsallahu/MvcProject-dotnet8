@@ -24,5 +24,8 @@ namespace MvcProject.Models
 
         
         public string? CreatedByUserId { get; set; }
+        
+        // Add navigation property for permissions
+        public ICollection<ProductPermission> Permissions { get; set; } = new List<ProductPermission>();
     }
 }

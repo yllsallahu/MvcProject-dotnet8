@@ -31,7 +31,7 @@
 
                         @if (User.IsInRole("Admin"))
         {
-                        <li class="@(ViewContext.RouteData.Values["area"]?.ToString() == "Admin" ? "active" : "")">
+                        <li class="nav-item @(ViewContext.RouteData.Values["area"]?.ToString() == "Admin" ? "active" : "")">
                             <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
                         </li>
         }

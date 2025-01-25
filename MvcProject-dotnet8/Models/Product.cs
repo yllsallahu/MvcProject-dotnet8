@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MvcProject.Models
 {
@@ -14,6 +15,8 @@ namespace MvcProject.Models
         public string? Description { get; set; }
 
         [Required]
+        [Range(0, 999999.99)]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
         public bool IsActive { get; set; } = true; 

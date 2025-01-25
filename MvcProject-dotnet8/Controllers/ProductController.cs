@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MvcProject_dotnet8.Controllers
 {
+    [Authorize] // Add this to require authentication for all actions
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -75,7 +76,6 @@ namespace MvcProject_dotnet8.Controllers
             return View(product);
         }
 
-        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -113,28 +113,44 @@ namespace MvcProject_dotnet8.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Price")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Price,CategoryId,IsActive")] Product product)
         {
             if (id != product.Id) return NotFound();
+
+            var existingProduct = await _context.Products.FindAsync(id);
+            if (existingProduct == null) return NotFound();
+
+            // Check if the current user is the creator
+            var currentUserId = _userManager.GetUserId(User);
+            if (existingProduct.CreatedByUserId != currentUserId && !User.IsInRole("Admin"))
+            {
+                return Forbid();
+            }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Preserve the original CreatedByUserId
+                    product.CreatedByUserId = existingProduct.CreatedByUserId;
+                    
+                    _context.Entry(existingProduct).State = EntityState.Detached;
                     _context.Update(product);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id)) return NotFound();
-
+                    if (!ProductExists(product.Id))
+                        return NotFound();
                     throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
 
+
+				[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -147,6 +163,7 @@ namespace MvcProject_dotnet8.Controllers
             return View(product);
         }
 
+				[Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -187,11 +204,7 @@ namespace MvcProject_dotnet8.Controllers
 
             var currentUserId = _userManager.GetUserId(User);
             
-            return product.CreatedByUserId == currentUserId ||
-                   await _context.ProductPermissions
-                       .AnyAsync(pp => pp.ProductId == product.Id && 
-                                     pp.UserId == currentUserId && 
-                                     pp.CanEdit);
+            return product.CreatedByUserId == currentUserId;
         }
     }
 }

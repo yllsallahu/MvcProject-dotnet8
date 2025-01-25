@@ -21,6 +21,10 @@ namespace MvcProject_dotnet8.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasColumnType("decimal(18,2)");
+
             modelBuilder.Entity<ProductPermission>()
                 .HasOne(pp => pp.Product)
                 .WithMany(p => p.Permissions)

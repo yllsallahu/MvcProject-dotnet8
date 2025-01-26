@@ -22,6 +22,14 @@ namespace MvcProject.Models
 
         public bool IsActive { get; set; } = true;
 
+        [Required]
+        [Range(1, 100, ErrorMessage = "Please enter a quantity between 1 and 100")]
+        public int OrderCount { get; set; } = 1;
+
+        // Calculate total price for the order
+        [NotMapped]
+        public decimal TotalPrice => Product?.Price * OrderCount ?? 0;
+
         // Navigation properties
         public Product Product { get; set; }
         public IdentityUser User { get; set; }

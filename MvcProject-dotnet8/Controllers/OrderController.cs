@@ -42,21 +42,28 @@ namespace MvcProject_dotnet8.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PlaceOrder(int productId)
+        public async Task<IActionResult> PlaceOrder(int productId, int orderCount)
         {
+            if (orderCount < 1 || orderCount > 100)
+            {
+                TempData["Error"] = "Please enter a valid quantity between 1 and 100.";
+                return RedirectToAction("Details", "Product", new { id = productId });
+            }
+
             var userId = _userManager.GetUserId(User);
             var order = new Order
             {
                 ProductId = productId,
                 UserId = userId,
                 OrderDate = DateTime.UtcNow,
-                Status = "Pending"
+                Status = "Pending",
+                OrderCount = orderCount
             };
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            TempData["Message"] = "Order placed successfully!";
+            TempData["Message"] = $"Order placed successfully for {orderCount} item(s)!";
             return RedirectToAction("Index", "Product");
         }
 

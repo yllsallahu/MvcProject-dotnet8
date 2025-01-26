@@ -1,54 +1,74 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.CodeAnalysis.Differencing;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MvcProject.Models;
 using MvcProject_dotnet8.Data;
-using System;
 
 namespace MvcProject_dotnet8.Controllers
 {
-    public class OrderController(ApplicationDbContext context) : Controller
+    [Authorize]
+    public class OrderController : Controller
     {
-        private readonly ApplicationDbContext _context = context;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public async Task<IActionResult> Index(string searchName, string sortOrder, int page = 1)
+        public OrderController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
-            int pageSize = 5; // caktimi i madhësisë së faqes
+            _context = context;
+            _userManager = userManager;
+        }
 
-            var products = from p in _context.Products
-                           select p;
-
-            // Filtrim
-            if (!string.IsNullOrEmpty(searchName))
-            {
-                products = products.Where(p => p.Name.Contains(searchName));
-            }
-
-            // Renditje
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    products = products.OrderByDescending(p => p.Name);
-                    break;
-                default:
-                    products = products.OrderBy(p => p.Name);
-                    break;
-            }
-
-            // Pagination
-            int totalItems = await products.CountAsync();
-            var items = await products
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
+        public async Task<IActionResult> Index()
+        {
+            var userId = _userManager.GetUserId(User);
+            var orders = await _context.Orders
+                .Include(o => o.Product)
+                .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
-            // ViewBag ose ViewModel për të kaluar të dhënat
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-            ViewBag.SearchName = searchName;
-            ViewBag.SortOrder = sortOrder;
+            return View(orders);
+        }
 
-            return View(items);
+        [HttpPost]
+        public async Task<IActionResult> PlaceOrder(int productId)
+        {
+            var userId = _userManager.GetUserId(User);
+            var product = await _context.Products.FindAsync(productId);
+
+            if (product == null)
+                return NotFound();
+
+            var order = new Order
+            {
+                ProductId = productId,
+                UserId = userId,
+                OrderDate = DateTime.Now,
+                IsActive = true
+            };
+
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Order placed successfully!";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelOrder(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            var order = await _context.Orders.FindAsync(id);
+
+            if (order == null || order.UserId != userId)
+                return NotFound();
+
+            order.IsActive = false;
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Order cancelled successfully!";
+            return RedirectToAction("Index");
         }
     }
 }

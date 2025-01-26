@@ -60,6 +60,10 @@
                                 {
                                     <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
                                 }
+                                <form asp-controller="Order" asp-action="PlaceOrder" method="post" class="d-inline">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success">Order</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

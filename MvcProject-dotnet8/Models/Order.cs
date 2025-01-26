@@ -12,5 +12,9 @@ namespace MvcProject.Models
         public bool IsActive { get; set; } = true;
 
         public string? UserId { get; set; }
+
+        [Required]
+        public int ProductId { get; set; }
+        public Product? Product { get; set; }
     }
 }

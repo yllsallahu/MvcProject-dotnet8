@@ -1,18 +1,25 @@
 @model IEnumerable<MvcProject.Models.Order>
 
 @{
-    ViewData["Title"] = "All Orders";
+    ViewData["Title"] = "My Orders";
 }
 
 <div class="container mt-4">
-    <h1 class="display-4">All Orders</h1>
+    <h1 class="display-4">My Orders</h1>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
                     <th>Order Date</th>
-                    <th>User</th>
                     <th>Product</th>
                     <th>Price</th>
                     <th>Status</th>
@@ -24,22 +31,22 @@
                 {
                     <tr>
                         <td>@order.OrderDate.ToString("g")</td>
-                        <td>@(order.User?.Email ?? order.User?.Email)</td>
                         <td>@order.Product.Name</td>
                         <td>@order.Product.Price.ToString("C")</td>
                         <td>
-                            <span class="badge bg-@(order.Status == "Pending" ? "warning" : "danger")">
+                            <span class="badge bg-@(order.Status == Order.StatusPending ? "warning" : 
+                                                 order.Status == Order.StatusReceived ? "success" : "danger")">
                                 @order.Status
                             </span>
                         </td>
                         <td>
-                            @if (order.Status == "Pending")
+                            @if (order.Status == Order.StatusPending)
                             {
-                                <form asp-action="CancelOrder" method="post" class="d-inline">
+                                <form asp-action="ConfirmReceived" method="post" class="d-inline">
                                     <input type="hidden" name="id" value="@order.Id" />
-                                    <button type="submit" class="btn btn-sm btn-danger" 
-                                            onclick="return confirm('Are you sure you want to cancel this order?')">
-                                        Cancel Order
+                                    <button type="submit" class="btn btn-sm btn-success" 
+                                            onclick="return confirm('Confirm that you received this order?')">
+                                        <i class="bi bi-check-circle"></i> Confirm Receipt
                                     </button>
                                 </form>
                             }

@@ -35,8 +35,13 @@
                         <li class="nav-item @(ViewContext.RouteData.Values["area"]?.ToString() == "Admin" ? "active" : "")">
                             <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Admin</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Order" asp-action="Index">All Orders</a>
+                        </li>
         }
-
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Order" asp-action="MyOrders">My Orders</a>
+                        </li>
 
                     </ul>
                     <partial name="_LoginPartial" />

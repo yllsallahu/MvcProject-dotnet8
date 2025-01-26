@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MvcProject.Data;
+using MvcProject_dotnet8.Data;
 using MvcProject.Models;
 
 namespace MvcProject.Api

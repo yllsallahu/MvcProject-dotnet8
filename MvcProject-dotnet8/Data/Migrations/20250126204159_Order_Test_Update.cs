@@ -10,7 +10,7 @@ namespace MvcProject_dotnet8.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+                
         }
 
         /// <inheritdoc />

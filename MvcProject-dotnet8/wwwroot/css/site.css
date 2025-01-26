@@ -20,3 +20,81 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+/* Login and Signup Form Styles */
+.auth-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-floating {
+    margin-bottom: 1rem;
+}
+
+.form-floating input {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.form-floating input:focus {
+    border-color: #258cfb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 140, 251, 0.25);
+}
+
+.auth-button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    background-color: #258cfb;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.auth-button:hover {
+    background-color: #1a6cbd;
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.auth-links a {
+    color: #258cfb;
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+.validation-summary-errors {
+    color: #dc3545;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.validation-summary-errors ul {
+    margin-bottom: 0;
+    padding-left: 20px;
+}

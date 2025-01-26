@@ -42,29 +42,46 @@ namespace MvcProject_dotnet8.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PlaceOrder(int productId, int orderCount)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PlaceOrder(int productId, int quantity)
         {
-            if (orderCount < 1 || orderCount > 100)
+            if (quantity <= 0 || quantity > 100)
             {
-                TempData["Error"] = "Please enter a valid quantity between 1 and 100.";
+                TempData["Error"] = "Please enter a valid quantity between 1 and 100";
                 return RedirectToAction("Details", "Product", new { id = productId });
             }
 
-            var userId = _userManager.GetUserId(User);
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+            {
+                TempData["Error"] = "Product not found";
+                return RedirectToAction("Index", "Product");
+            }
+
             var order = new Order
             {
                 ProductId = productId,
-                UserId = userId,
+                UserId = _userManager.GetUserId(User),
+                Quantity = quantity,
+                TotalPrice = product.Price * quantity,
                 OrderDate = DateTime.UtcNow,
-                Status = "Pending",
-                OrderCount = orderCount
+                Status = Order.StatusPending,
+                IsActive = true
             };
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
 
-            TempData["Message"] = $"Order placed successfully for {orderCount} item(s)!";
-            return RedirectToAction("Index", "Product");
+                TempData["Message"] = "Order placed successfully!";
+                return RedirectToAction(nameof(MyOrders));
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "There was an error placing your order. Please try again.";
+                return RedirectToAction("Details", "Product", new { id = productId });
+            }
         }
 
         [Authorize(Roles = "Admin")]

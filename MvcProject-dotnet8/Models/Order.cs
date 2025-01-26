@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace MvcProject.Models
@@ -24,11 +25,10 @@ namespace MvcProject.Models
 
         [Required]
         [Range(1, 100, ErrorMessage = "Please enter a quantity between 1 and 100")]
-        public int OrderCount { get; set; } = 1;
+        public int Quantity { get; set; } = 1;
 
-        // Calculate total price for the order
-        [NotMapped]
-        public decimal TotalPrice => Product?.Price * OrderCount ?? 0;
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalPrice { get; set; }
 
         // Navigation properties
         public Product Product { get; set; }

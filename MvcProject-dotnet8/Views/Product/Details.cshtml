@@ -5,34 +5,93 @@
 }
 
 <div class="container mt-4">
-    <div class="card">
+    <div class="card shadow">
         <div class="card-header bg-info text-white">
             <h4 class="card-title mb-0">Product Details</h4>
         </div>
         <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Name</dt>
-                <dd class="col-sm-9">@Model.Name</dd>
-                
-                <dt class="col-sm-3">Price</dt>
-                <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
-                
-                @if (!string.IsNullOrEmpty(Model.Description))
-                {
-                    <dt class="col-sm-3">Description</dt>
-                    <dd class="col-sm-9">@Model.Description</dd>
-                }
-            </dl>
+            <div class="row">
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-3">Name</dt>
+                        <dd class="col-sm-9">@Model.Name</dd>
+                        
+                        <dt class="col-sm-3">Price</dt>
+                        <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+                        
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <dt class="col-sm-3">Description</dt>
+                            <dd class="col-sm-9">@Model.Description</dd>
+                        }
+
+                        @if (Model.Category != null)
+                        {
+                            <dt class="col-sm-3">Category</dt>
+                            <dd class="col-sm-9">@Model.Category</dd>
+                        }
+                    </dl>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Place Order</h5>
+                            <form asp-controller="Order" asp-action="PlaceOrder" method="post">
+                                <input type="hidden" name="productId" value="@Model.Id" />
+                                
+                                <div class="mb-3">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input type="number" class="form-control" id="quantity" 
+                                           name="quantity" value="1" min="1" max="100" required />
+                                    <div class="form-text">Enter quantity (1-100)</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Total Price</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="text" class="form-control" id="totalPrice" 
+                                               readonly value="@Model.Price.ToString("F2")" />
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-cart-plus"></i> Place Order
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="card-footer">
             <div class="btn-group">
-                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                    <i class="bi bi-pencil"></i> Edit
-                </a>
                 <a asp-action="Index" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Back to List
                 </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                }
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('quantity').addEventListener('change', function() {
+            const quantity = this.value;
+            const price = @Html.Raw(Model.Price);
+            const total = (quantity * price).toFixed(2);
+            document.getElementById('totalPrice').value = total;
+        });
+    </script>
+}
